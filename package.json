@@ -2,6 +2,12 @@
   "name": "pandaset-challenge",
   "version": "1.0.0",
   "license": "MIT",
+  "scripts": {
+    "dev": "parcel index.html",
+    "start": "parcel index.html",
+    "build": "parcel build index.html --public-url ./",
+    "clean": "rimraf .cache .parcel-cache dist"
+  },
   "devDependencies": {
     "@types/three": "^0.156.0",
     "buffer": "^5.5.0||^6.0.0",
