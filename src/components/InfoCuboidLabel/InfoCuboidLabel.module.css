@@ -1,0 +1,96 @@
+.infoCuboidLabel {
+  position: absolute;
+  bottom: 80px;
+  left: 20px;
+  background: white;
+  color: #1e3a8a;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 13px;
+  pointer-events: none;
+  border: 1px solid #3b82f6;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.labelName {
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1d4ed8;
+}
+
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.static {
+  background: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+}
+
+.moving {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #7dd3fc;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+  margin: 4px 0;
+}
+
+.statsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.statsGrid div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.statsGrid strong {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.statsGrid span {
+  font-family: monospace;
+  font-weight: 600;
+  color: #111827;
+}
+
+.uuidRow {
+  margin-top: 4px;
+  color: #9ca3af;
+  font-family: monospace;
+}
+
+@media (max-width: 640px) {
+  .infoCuboidLabel {
+    left: 5%;
+    width: 90%;
+    max-width: 90%;
+    bottom: 20px;
+  }
+}
