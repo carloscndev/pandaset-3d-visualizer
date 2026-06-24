@@ -1,10 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { FrameCache } from '../utils/FrameCache';
 import { DataCloudFrame } from "../types";
-
-const baseUrl = 'https://static.scale.com/uploads/pandaset-challenge';
-const totalFrames = 50;
-const preFetchCount = 2;
+import { CONFIG } from '../config';
+import { getFrameUrl } from '../utils/index'
 
 const usePointCloud = () => {
   console.log('usePointCloud');
@@ -14,10 +12,6 @@ const usePointCloud = () => {
   const [currentFrame, setCurrentFrame] = useState<DataCloudFrame | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  const getFrameUrl = (index: number): string => {
-    return `${baseUrl}/frame_${String(index).padStart(2, '0')}.json`;
-  };
 
   const fetchFrame = useCallback(async (index: number): Promise<DataCloudFrame | null> => {
     if (pendingRef.current.has(index)) return null;
@@ -44,7 +38,7 @@ const usePointCloud = () => {
   }, []);
 
   const preFetch = useCallback(async (index: number) => {
-    if (index >= totalFrames) return;
+    if (index >= CONFIG.TOTAL_FRAMES) return;
     if (cacheRef.current.getFrame(index)) return;
     
     try { 
@@ -55,14 +49,14 @@ const usePointCloud = () => {
   }, [fetchFrame]);
 
   const loadFrame = useCallback(async (index: number) => {
-    if (index < 0 || index >= totalFrames) return;
+    if (index < 0 || index >= CONFIG.TOTAL_FRAMES) return;
     setCurrentIndex(index);
 
     const cached = cacheRef.current.getFrame(index);
     if (cached) {
       setCurrentFrame(cached);
       setLoading(false);
-      for (let i = 1; i <= preFetchCount; i++) {
+      for (let i = 1; i <= CONFIG.PRE_FETCH_COUNT; i++) {
         preFetch(index + i);
       }
       return;
@@ -75,7 +69,7 @@ const usePointCloud = () => {
     if (data) {
       setCurrentFrame(data);
       setLoading(false);
-      for (let i = 1; i <= preFetchCount; i++) {
+      for (let i = 1; i <= CONFIG.PRE_FETCH_COUNT; i++) {
         preFetch(index + i);
       }
     } else {
@@ -99,7 +93,7 @@ const usePointCloud = () => {
   return { 
     currentFrame,
     currentIndex,
-    totalFrames,
+    totalFrames: CONFIG.TOTAL_FRAMES,
     loading,
     error,
     goNext,
