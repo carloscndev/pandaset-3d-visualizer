@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import Viewer3D from '../Viewer3D'
 import styles from './App.module.css'
+import { DataCloudFrame } from '../../types';
 
 
 const App = () => {
-  const [data, setData] = useState<any>();
+  const [data, setData] = useState<DataCloudFrame | null>();
 
   useEffect(() => {
     const loadData = async() => {
