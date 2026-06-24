@@ -22,14 +22,14 @@ const App = () => {
     loadData();
   }, []);
 
-  const points = useMemo(() => {
+  const positions = useMemo(() => {
     if(!data) return new Float32Array();
     return parsePoints(data.points);
   }, [data]);
 
   return (
    <div id="3d-viewer-container" className={styles.container}>
-    <Viewer3D points={points} />
+    <Viewer3D positions={positions} />
   </div>
 )};
 
