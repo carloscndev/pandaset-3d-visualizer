@@ -5,6 +5,7 @@ import Viewer3D from '../Viewer3D'
 import LoadingSpinner from '../LoadingSpinner';
 import ErrorIndicator from '../ErrorIndicator';
 import InfoCuboidLabel from '../InfoCuboidLabel';
+import { Timeline } from '../Timeline';
 import usePointCloud from '../../hooks/usePointCloud';
 import styles from './App.module.css'
 
@@ -25,6 +26,7 @@ const App = () => {
       cuboids={data?.cuboids ?? []}
       onCuboidHover={setSelected} 
     />
+    <Timeline frameId={data?.frame_id ?? 0} />
      {selected && <InfoCuboidLabel selected={selected} />}
   </div>
 )};
