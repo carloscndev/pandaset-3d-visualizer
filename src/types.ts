@@ -13,11 +13,11 @@ export interface Cuboid {
   'position.x': number
   'position.y': number
   'position.z': number
-  'dimension.x': number
-  'dimension.y': number
-  'dimension.z': number
+  'dimensions.x': number
+  'dimensions.y': number
+  'dimensions.z': number
   'cuboids.sibling_id'?: string
-  'cuboids.sensor_id'?: string
+  'cuboids.sensor_id'?: number
 }
 
 export interface DataCloudFrame {

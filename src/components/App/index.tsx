@@ -17,8 +17,8 @@ const App = () => {
   return (
    <div id="3d-viewer-container" className={styles.container}>
     {loading && <LoadingSpinner />}
-    {error && <ErrorIndicator error={error} />}
-    <Viewer3D positions={positions} />
+    {error && <ErrorIndicator error={error} />} 
+    <Viewer3D positions={positions} cuboids={data?.cuboids ?? []} />
   </div>
 )};
 
