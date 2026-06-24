@@ -1,9 +1,10 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { parsePoints } from '../../utils';
-import { DataCloudFrame } from '../../types';
 import Viewer3D from '../Viewer3D'
-import styles from './App.module.css'
+import LoadingSpinner from '../LoadingSpinner';
+import ErrorIndicator from '../ErrorIndicator';
 import usePointCloud from '../../hooks/usePointCloud';
+import styles from './App.module.css'
 
 const App = () => {
   const {data, loading, error} = usePointCloud('https://static.scale.com/uploads/pandaset-challenge/frame_00.json');
@@ -15,8 +16,8 @@ const App = () => {
 
   return (
    <div id="3d-viewer-container" className={styles.container}>
-   {loading && <div>Loading</div>}
-    {error && <div>Error</div>}
+    {loading && <LoadingSpinner />}
+    {error && <ErrorIndicator error={error} />}
     <Viewer3D positions={positions} />
   </div>
 )};
