@@ -85,11 +85,12 @@ const CameraSetup = () => {
 
 const Viewer3D = ({ positions, cuboids, onCuboidHover }: Props) => (
   <Canvas
-    style={{ width: '100%', height: '100%', backgroundColor: '#000' }}
+    style={{ width: '100%', height: '100%' }}
     camera={{ position: [CLOUD_CENTER[0] - 280, CLOUD_CENTER[1] - 160, CLOUD_CENTER[2] + 140], fov: 70 }}
   >
     <color attach="background" args={[BG_COLOR]} />
     <OrbitControls makeDefault target={CLOUD_CENTER} />
+    <CameraSetup />
     <CameraController />
     <PointCloud positions={positions} />
     <Cuboids cuboids={cuboids} onHover={onCuboidHover} />
