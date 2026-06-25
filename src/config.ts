@@ -2,6 +2,7 @@ export const CONFIG = {
   BASE_URL: 'https://static.scale.com/uploads/pandaset-challenge',
   PRE_FETCH_COUNT: 2,
   TOTAL_FRAMES: 50,
-  MAX_FRAME_CACHE_MB: 50,
+  MAX_FRAME_CACHE_MB: 512,
   WARNING_THRESHOLD: 0.8,
+  FETCH_TIMEOUT_MS: 15_000,
 }

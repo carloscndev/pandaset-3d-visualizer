@@ -5,37 +5,31 @@ import { CONFIG } from '../config';
 import { getFrameUrl } from '../utils/index'
 
 const usePointCloud = () => {
-  console.log('usePointCloud');
   const cacheRef = useRef(new FrameCache());
-  const pendingRef = useRef<Set<number>>(new Set());
+  const inflightRef = useRef<Map<number, Promise<DataCloudFrame | null>>>(new Map())
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentFrame, setCurrentFrame] = useState<DataCloudFrame | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchFrame = useCallback(async (index: number): Promise<DataCloudFrame | null> => {
-    if (pendingRef.current.has(index)) return null;
-    pendingRef.current.add(index);
+ const fetchFrame = useCallback(async (index: number): Promise<DataCloudFrame | null> => {
+    const inflight = inflightRef.current.get(index)
+    if (inflight) return inflight
 
-    try {
-      const url = getFrameUrl(index);
-      console.log(url);
-      const response = await fetch(url);
-      const data = await response.json();
-      console.log(data);
-      cacheRef.current.setFrame(data);
-      return data;
-    } catch (error) {
-      console.log(error)
-      const message = error instanceof Error ? error.message : String(error);
-      setError(message);
-      setLoading(false);
-      return null;
-    } finally {
-      console.log('f')
-      pendingRef.current.delete(index);
-    }
-  }, []);
+    const promise = (async () => {
+      const url = getFrameUrl(index)
+      const res = await fetch(url, { signal: AbortSignal.timeout(CONFIG.FETCH_TIMEOUT_MS) })
+      if (!res.ok) throw new Error(`Frame ${index}: HTTP ${res.status}`)
+      const data = await res.json() as DataCloudFrame
+      cacheRef.current.setFrame(data)
+      return data
+    })().finally(() => {
+      inflightRef.current.delete(index)
+    })
+
+    inflightRef.current.set(index, promise)
+    return promise
+  }, [])
 
   const preFetch = useCallback(async (index: number) => {
     if (index >= CONFIG.TOTAL_FRAMES) return;
@@ -51,6 +45,7 @@ const usePointCloud = () => {
   const loadFrame = useCallback(async (index: number) => {
     if (index < 0 || index >= CONFIG.TOTAL_FRAMES) return;
     setCurrentIndex(index);
+     setError(null);
 
     const cached = cacheRef.current.getFrame(index);
     if (cached) {
@@ -65,16 +60,22 @@ const usePointCloud = () => {
     setLoading(true);
     setError(null);
 
-    const data = await fetchFrame(index);
-    if (data) {
-      setCurrentFrame(data);
-      setLoading(false);
-      for (let i = 1; i <= CONFIG.PRE_FETCH_COUNT; i++) {
-        preFetch(index + i);
+    try {
+      const data = await fetchFrame(index);
+      if (data) {
+        setCurrentFrame(data);
+        setLoading(false);
+        for (let i = 1; i <= CONFIG.PRE_FETCH_COUNT; i++) {
+          preFetch(index + i);
+        }
+      } else {
+        setError(`Failed to load frame ${index}`);
+        setLoading(false);
       }
-    } else {
-      setError(`Failed to load frame ${index}`);
-      setLoading(false);
+    } catch(error) {
+      const msg = error instanceof Error ? error.message : `Failed to load frame ${index}`
+      setError(msg)
+      setLoading(false)
     }
   }, [fetchFrame, preFetch]);
 

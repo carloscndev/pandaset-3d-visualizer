@@ -18,11 +18,11 @@ const App = () => {
     loading, 
     error, 
     goNext, 
-    goPrev, 
+    goPrev,
+    loadFrame, 
     cache,
   } = usePointCloud();
   const [selected, setSelected] = useState<Cuboid | null>(null);
-  console.log('Current', currentFrame);
     
   const positions = useMemo(() => {
     if(!currentFrame) return new Float32Array();
@@ -33,7 +33,13 @@ const App = () => {
   return (
    <div id="3d-viewer-container" className={styles.container}>
     {loading && <LoadingSpinner />}
-    {error && <ErrorIndicator error={error} />} 
+    {
+      error && 
+      <ErrorIndicator 
+        error={error}
+        currentIndex={currentIndex}
+        loadFrame={loadFrame}
+      />} 
     <CacheHUD cache={cache} />
     <Viewer3D 
       positions={positions} 
