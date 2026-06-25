@@ -79,6 +79,7 @@ const usePointCloud = () => {
   }, [fetchFrame, preFetch]);
 
   useEffect(() => {
+    cacheRef.current.onWarning = (used, max) => console.warn(`[FrameCache] ${used}MB / ${max}MB used`)
     loadFrame(0)
   }, [loadFrame])
 
