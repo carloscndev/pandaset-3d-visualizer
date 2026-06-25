@@ -30,17 +30,10 @@ const mapKey = (key: string): keyof Controls | null => {
 
 export const useControls = () => {
   const state = useRef<Controls>({
-    forward: false,
-    backward: false,
-    left: false,
-    right: false,
-    up: false,
-    down: false,
-    rotateLeft: false,
-    rotateRight: false,
-    rotateUp: false,
-    rotateDown: false,
-  });
+    forward: false, backward: false, left: false, right: false,
+    up: false, down: false, rotateLeft: false, rotateRight: false,
+    rotateUp: false, rotateDown: false,
+  })
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -60,5 +53,5 @@ export const useControls = () => {
     }
   }, [])
 
-  return state;
-};
+  return state
+}

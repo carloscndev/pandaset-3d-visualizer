@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { Canvas, useFrame, useThree  } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei';
 import { Cuboid } from '../../types'
@@ -13,49 +13,82 @@ interface Props {
 
 const SPEED = 50
 const ROTATION_SPEED = 1.5
+const CLOUD_CENTER: [number, number, number] = [34, 61, 7.5]
+
 
 const CameraController = () => {
-  const { camera } = useThree()
-  const controls = useControls()
+  const { camera, controls: orbit } = useThree()
+  const keys = useControls()
   const yaw = useRef(0)
+  const pitch = useRef(0)
 
   useFrame((_, delta) => {
-    const c = controls.current
+    const k = keys.current
+    let moved = false
+    let rotated = false
 
-    if (c.rotateLeft) yaw.current += ROTATION_SPEED * delta
-    if (c.rotateRight) yaw.current -= ROTATION_SPEED * delta
+    if (k.rotateLeft) { yaw.current += ROTATION_SPEED * delta; rotated = true }
+    if (k.rotateRight) { yaw.current -= ROTATION_SPEED * delta; rotated = true }
+    if (k.rotateUp) { pitch.current = Math.min(Math.PI / 3, pitch.current + ROTATION_SPEED * delta); rotated = true }
+    if (k.rotateDown) { pitch.current = Math.max(-Math.PI / 6, pitch.current - ROTATION_SPEED * delta); rotated = true }
 
-    const forward = [Math.sin(yaw.current), 0, Math.cos(yaw.current)] as const
-    const right = [Math.cos(yaw.current), 0, -Math.sin(yaw.current)] as const
+    const cosY = Math.cos(yaw.current)
+    const sinY = Math.sin(yaw.current)
+    const cosP = Math.cos(pitch.current)
+    const sinP = Math.sin(pitch.current)
 
     let dx = 0, dy = 0, dz = 0
 
-    if (c.forward) { dx += forward[0]; dz += forward[2] }
-    if (c.backward) { dx -= forward[0]; dz -= forward[2] }
-    if (c.right) { dx += right[0]; dz += right[2] }
-    if (c.left) { dx -= right[0]; dz -= right[2] }
-    if (c.up) dy += 1
-    if (c.down) dy -= 1
+    if (k.forward) { dx += sinY * cosP; dy += cosY * cosP; dz -= sinP }
+    if (k.backward) { dx -= sinY * cosP; dy -= cosY * cosP; dz += sinP }
+    if (k.right) { dx += cosY; dy -= sinY }
+    if (k.left) { dx -= cosY; dy += sinY }
+    if (k.up) dz += 1
+    if (k.down) dz -= 1
 
-    const len = Math.sqrt(dx * dx + dz * dz)
-    if (len > 0) { dx /= len; dz /= len }
+    const len = Math.sqrt(dx * dx + dy * dy)
+    if (len > 0) { dx /= len; dy /= len }
+    if (len > 0 || dz !== 0) moved = true
 
-    camera.position.x += dx * SPEED * delta
-    camera.position.y += dy * SPEED * delta
-    camera.position.z += dz * SPEED * delta
+    if (moved) {
+      camera.position.x += dx * SPEED * delta
+      camera.position.y += dy * SPEED * delta
+      camera.position.z += dz * SPEED * delta
+    }
 
-    camera.lookAt(camera.position.x + forward[0], camera.position.y, camera.position.z + forward[2])
+    if (orbit) {
+      if (moved) {
+        orbit.target.x += dx * SPEED * delta
+        orbit.target.y += dy * SPEED * delta
+        orbit.target.z += dz * SPEED * delta
+      } else if (rotated) {
+        const dist = camera.position.distanceTo(orbit.target)
+        orbit.target.x = camera.position.x + dist * sinY * cosP
+        orbit.target.y = camera.position.y + dist * cosY * cosP
+        orbit.target.z = camera.position.z + dist * sinP
+      }
+      orbit.update()
+    }
   })
 
+  return null
+};
+
+const CameraSetup = () => {
+  const { camera } = useThree()
+  useEffect(() => {
+    camera.up.set(0, 0, 1)
+    camera.lookAt(CLOUD_CENTER[0], CLOUD_CENTER[1], CLOUD_CENTER[2])
+  }, [camera])
   return null
 }
 
 const Viewer3D = ({ positions, cuboids, onCuboidHover }: Props) => (
   <Canvas
     style={{ width: '100%', height: '100%', backgroundColor: '#000' }}
-    camera={{ position: [0, 0, 150], fov: 75 }}
+    camera={{ position: [CLOUD_CENTER[0] - 280, CLOUD_CENTER[1] - 160, CLOUD_CENTER[2] + 140], fov: 70 }}
   >
-    <OrbitControls />
+    <OrbitControls makeDefault target={CLOUD_CENTER} />
     <CameraController />
     <PointCloud positions={positions} />
     <Cuboids cuboids={cuboids} onHover={onCuboidHover} />
