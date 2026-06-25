@@ -10,7 +10,7 @@
   font-family: monospace;
   font-size: 12px;
   color: var(--color-text);
-  min-width: 180px;
+  max-width: 220px;
   line-height: 1.6;
   pointer-events: none;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -42,6 +42,9 @@
   margin-top: 4px;
   font-size: 11px;
   opacity: 0.85;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 4px;
 }
 
 .frameIds {
@@ -55,4 +58,12 @@
 
 .frameId {
   font-weight: normal;
+}
+
+@media (max-width: 640px) {
+  .hudContainer {
+    left: 5%;
+    width: 90%;
+    max-width: 90%;
+  }
 }
