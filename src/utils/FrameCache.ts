@@ -1,4 +1,5 @@
 import { DataCloudFrame } from '../types';
+import { getMaxFrameMB } from '../utils'
 import { CONFIG } from '../config';
 
 export type CacheStatus = 'loading' | 'ready' | 'evicted';
@@ -18,7 +19,7 @@ export class FrameCache {
   private warningPct = CONFIG.WARNING_THRESHOLD;
   onWarning?: (usedMB: number, maxMB: number) => void;
 
-  constructor(maxMB: number = CONFIG.MAX_FRAME_CACHE_MB) {
+  constructor(maxMB: number = getMaxFrameMB) {
     this.maxBytes = maxMB * 1024 * 1024;
   }
 

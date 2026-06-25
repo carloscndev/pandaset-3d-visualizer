@@ -24,3 +24,11 @@ export const parsePoints = (points: number[][]): Float32Array => {
 export const getFrameUrl = (index: number): string => {
   return `${CONFIG.BASE_URL}/frame_${String(index).padStart(2, '0')}.json`;
 };
+
+/**
+ * Resolves the maximum cache size limit in MB from URL params, defaulting to 512.
+ * @type {number}
+ */
+export const getMaxFrameMB = typeof window !== 'undefined' 
+  ? Number(new URLSearchParams(window.location.search).get('MAX_FRAME_CACHE_MB')) || CONFIG.MAX_FRAME_CACHE_MB
+  : CONFIG.MAX_FRAME_CACHE_MB;
