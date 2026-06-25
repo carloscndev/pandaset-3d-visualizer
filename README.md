@@ -12,7 +12,7 @@ This is my solution to the technical 3D visualization challenge. The project fea
 
 ## Diagnostic UI
 
-* **CacheHUD**: A real-time monitoring HUD built with CSS Modules. It tracks allocated megabytes against the hard ceiling and triggers a soft warning when usage exceeds 90% of the assigned budget.
+* **CacheHUD**: A real-time monitoring HUD built with CSS Modules. It tracks allocated megabytes against the hard ceiling and listens to the cache warnings, rendering a prominent visual alert overlay directly in the UI as soon as the frames exceed the configured warning threshold.
 
 ## Getting Started
 
