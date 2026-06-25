@@ -4,9 +4,10 @@ import styles from './CacheHUD.module.css';
 
 interface Props {
   cache: FrameCache;
+  failedFrames: Set<number>
 }
 
-export const CacheHUD = ({ cache }: Props) => {
+export const CacheHUD = ({ cache, failedFrames }: Props) => {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -41,11 +42,21 @@ export const CacheHUD = ({ cache }: Props) => {
       
       <div className={styles.framesList}>
         Frames cached: {entries.length}
-        {entries.length > 0 && (
-          <span className={styles.frameIds}>
-            {' '}[{entries.map((e) => e.frame.frame_id).join(', ')}]
-          </span>
-        )}
+          { entries.length > 0 && (<span> [</span>)}
+          {
+            entries.map((entry, idx) => {
+              const isFail = failedFrames.has(entry.frame.frame_id)
+              return (
+                <span key={entry.frame.frame_id}>
+                  { idx > 0 && <span>, </span> }
+                  <span className={isFail ? styles.frameIdFail : styles.frameId}>
+                    {entry.frame.frame_id}
+                  </span>
+                </span>
+              )
+            })
+          }
+         { entries.length > 0 && <span>]</span> }
       </div>
     </div>
   );

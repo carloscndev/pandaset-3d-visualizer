@@ -47,3 +47,12 @@
 .frameIds {
   color: #3b82f6;
 }
+
+.frameIdFail {
+  color: #ef4444;
+  font-weight: bold;
+}
+
+.frameId {
+  font-weight: normal;
+}

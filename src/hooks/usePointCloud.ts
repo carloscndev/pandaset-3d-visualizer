@@ -9,6 +9,7 @@ const usePointCloud = () => {
   const inflightRef = useRef<Map<number, Promise<DataCloudFrame | null>>>(new Map())
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentFrame, setCurrentFrame] = useState<DataCloudFrame | null>(null);
+   const [failedFrames, setFailedFrames] = useState<Set<number>>(new Set())
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,6 +60,11 @@ const usePointCloud = () => {
 
     setLoading(true);
     setError(null);
+    setFailedFrames((prev) => {
+      const next = new Set(prev)
+      next.delete(index)
+      return next
+    })
 
     try {
       const data = await fetchFrame(index);
@@ -71,11 +77,13 @@ const usePointCloud = () => {
       } else {
         setError(`Failed to load frame ${index}`);
         setLoading(false);
+        setFailedFrames((prev) => new Set(prev).add(index))
       }
     } catch(error) {
       const msg = error instanceof Error ? error.message : `Failed to load frame ${index}`
       setError(msg)
       setLoading(false)
+      setFailedFrames((prev) => new Set(prev).add(index))
     }
   }, [fetchFrame, preFetch]);
 
@@ -98,6 +106,7 @@ const usePointCloud = () => {
     totalFrames: CONFIG.TOTAL_FRAMES,
     loading,
     error,
+    failedFrames,
     goNext,
     goPrev,
     loadFrame,

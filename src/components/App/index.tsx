@@ -16,7 +16,8 @@ const App = () => {
     currentIndex, 
     totalFrames,
     loading, 
-    error, 
+    error,
+    failedFrames, 
     goNext, 
     goPrev,
     loadFrame, 
@@ -40,7 +41,7 @@ const App = () => {
         currentIndex={currentIndex}
         loadFrame={loadFrame}
       />} 
-    <CacheHUD cache={cache} />
+    <CacheHUD cache={cache} failedFrames={failedFrames} />
     <Viewer3D 
       positions={positions} 
       cuboids={currentFrame?.cuboids ?? []}
