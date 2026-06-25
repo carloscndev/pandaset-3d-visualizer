@@ -1,6 +1,6 @@
-import React from 'react';
-import styles from './InfoCuboidLabel.module.css';
+
 import { Cuboid } from '../../types';
+import styles from './InfoCuboidLabel.module.css';
 
 interface Props {
   selected: Cuboid;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FrameCache } from '../../utils/FrameCache';
 import styles from './CacheHUD.module.css';
 
