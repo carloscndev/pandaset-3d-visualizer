@@ -39,7 +39,7 @@ const CuboidBox = ({ cuboid, onHover }: { cuboid: CuboidType, onHover?: (cuboid:
   return (
     <group
       position={[posX, posY, posZ]}
-      rotation={[0, -cuboid.yaw, 0]}
+      rotation={[0, 0, -cuboid.yaw]}
     >
       <mesh
         onPointerOver={(e) => { e.stopPropagation(); setHovered(true); onHover?.(cuboid) }}
