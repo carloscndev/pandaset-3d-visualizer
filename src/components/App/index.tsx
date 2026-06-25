@@ -6,6 +6,7 @@ import LoadingSpinner from '../LoadingSpinner';
 import ErrorIndicator from '../ErrorIndicator';
 import InfoCuboidLabel from '../InfoCuboidLabel';
 import Timeline  from '../Timeline';
+import { CacheHUD } from '../CacheHUD';
 import usePointCloud from '../../hooks/usePointCloud';
 import styles from './App.module.css'
 
@@ -33,6 +34,7 @@ const App = () => {
    <div id="3d-viewer-container" className={styles.container}>
     {loading && <LoadingSpinner />}
     {error && <ErrorIndicator error={error} />} 
+    <CacheHUD cache={cache} />
     <Viewer3D 
       positions={positions} 
       cuboids={currentFrame?.cuboids ?? []}

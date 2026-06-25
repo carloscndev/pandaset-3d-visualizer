@@ -1,17 +1,21 @@
 import { DataCloudFrame } from '../types';
 import { CONFIG } from '../config';
 
-interface FrameEntry {
+export type CacheStatus = 'loading' | 'ready' | 'evicted';
+
+export interface FrameEntry {
   frame: DataCloudFrame;
-  bytes: number;
+  byteSize: number;
   lastAccess: number;
+  status: CacheStatus;
+  buffers: { type: 'geometry' | 'typedarray'; byteSize: number; }[];
 }
 
 export class FrameCache {
   private store = new Map<number, FrameEntry>();
   private disposables = new Map<number, (() => void)[]>();
   private maxBytes: number;
-  private warningPct = 0.9;
+  private warningPct = CONFIG.WARNING_THRESHOLD;
   onWarning?: (usedMB: number, maxMB: number) => void;
 
   constructor(maxMB: number = CONFIG.MAX_FRAME_CACHE_MB) {
@@ -22,9 +26,19 @@ export class FrameCache {
     return this.store.size;
   }
 
-  setFrame(frame: DataCloudFrame): void {
-    const bytes = this.estimateFrameBytes(frame);
-    const entry: FrameEntry = { frame, bytes, lastAccess: Date.now() };
+  setFrame(frame: DataCloudFrame, extraBuffers?: { type: 'geometry' | 'typedarray'; byteSize: number; }[]): void {
+    const baseBytes = this.estimateFrameBytes(frame);
+    const buffers = extraBuffers ?? [];
+    const extraBytes = buffers.reduce((s, b) => s + b.byteSize, 0);
+    
+    const entry: FrameEntry = {
+      frame,
+      byteSize: baseBytes + extraBytes,
+      lastAccess: Date.now(),
+      status: 'ready',
+      buffers,
+    };
+    
     const existing = this.store.get(frame.frame_id);
     this.store.set(frame.frame_id, entry);
 
@@ -44,10 +58,24 @@ export class FrameCache {
     return undefined;
   }
 
+  getEntry(id: number): FrameEntry | undefined {
+    const entry = this.store.get(id);
+    if (entry) {
+      entry.lastAccess = Date.now();
+    }
+    return entry;
+  }
+
+  getEntries(): FrameEntry[] {
+    return Array.from(this.store.values())
+      .map(e => ({ ...e }))
+      .sort((a, b) => a.frame.frame_id - b.frame.frame_id);
+  }
+
   get totalBytes(): number {
     let sum = 0;
     for (const entry of this.store.values()) {
-      sum += entry.bytes;
+      sum += entry.byteSize;
     }
     return sum;
   }
@@ -84,12 +112,14 @@ export class FrameCache {
 
   disposeFrame(id: number): void {
     const disposers = this.disposables.get(id);
+
     if (disposers) {
       for (const dispose of disposers) {
         dispose();
       }
       this.disposables.delete(id);
     }
+
     this.store.delete(id);
   }
 
