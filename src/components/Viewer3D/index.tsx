@@ -11,10 +11,10 @@ interface Props {
   onCuboidHover?: (cuboid: Cuboid | null) => void
 }
 
-const SPEED = 50
-const ROTATION_SPEED = 1.5
-const CLOUD_CENTER: [number, number, number] = [34, 61, 7.5]
-
+const SPEED = 50;
+const ROTATION_SPEED = 1.5;
+const CLOUD_CENTER: [number, number, number] = [34, 61, 7.5];
+const BG_COLOR = '#080d29';
 
 const CameraController = () => {
   const { camera, controls: orbit } = useThree()
@@ -88,6 +88,7 @@ const Viewer3D = ({ positions, cuboids, onCuboidHover }: Props) => (
     style={{ width: '100%', height: '100%', backgroundColor: '#000' }}
     camera={{ position: [CLOUD_CENTER[0] - 280, CLOUD_CENTER[1] - 160, CLOUD_CENTER[2] + 140], fov: 70 }}
   >
+    <color attach="background" args={[BG_COLOR]} />
     <OrbitControls makeDefault target={CLOUD_CENTER} />
     <CameraController />
     <PointCloud positions={positions} />

@@ -4,8 +4,24 @@
   box-sizing: border-box;
 }
 
+:root {
+  --color-text: #d6def5;
+  --color-bg: #080d29;
+  --color-accent: #331fe8;
+  --color-cuboid-edge: #ff2a85;
+  --color-cuboid-face: rgba(255, 42, 133, 0.2);
+  --color-cuboid-hover: #ff73b3;
+  --color-surface: rgba(8, 13, 41, 0.85);
+  --color-border: rgba(214, 222, 245, 0.15);
+  --color-warning: #ff2a85;
+  --color-progress: #331fe8;
+}
+
 html, body, #root {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  color: var(--color-text);
+  background: var(--color-bg);
 }
+

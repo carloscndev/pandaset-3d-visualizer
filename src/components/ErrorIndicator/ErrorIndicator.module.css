@@ -8,11 +8,11 @@
   justify-content: center;
   font-size: 16px;
   z-index: 20;
-  color: yellow;
+  color: var(--color-warning);
 
   .loadFrameButton {
-    background: orange;
-    color: white;
+    background: var(--color-accent);
+    color: var(--color-text);
     border: none;
     border-radius: 4px;
     padding: 6px 16px;
